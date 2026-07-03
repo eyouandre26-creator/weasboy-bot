@@ -1,3 +1,14 @@
+import http.server
+import socketserver
+import threading
+
+def run_fake_server():
+    PORT = 10000
+    Handler = http.server.SimpleHTTPRequestHandler
+    with socketserver.TCPServer(("", PORT), Handler) as httpd:
+        httpd.serve_forever()
+
+threading.Thread(target=run_fake_server, daemon=True).start()
 import random
 import telebot
 from telebot import types
