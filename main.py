@@ -15,7 +15,7 @@ def run_fake_server():
 
 threading.Thread(target=run_fake_server, daemon=True).start()
 
-# 2. CONFIGURATION DES CLÉS (TOKEN TELEGRAM ET CLÉ GEMINI)
+# 2. CONFIGURATION DES CLÉS
 TOKEN = "8984219272:AAFEoPVU4hfDiLggSL3dYUEswSUztTNA3ic"
 GEMINI_API_KEY = "AQ.Ab8RN6KEosy9rItekKaxlPQNlYyTOLyF5Llm68Gmu38L1u-rzQ"
 
@@ -23,13 +23,13 @@ bot = telebot.TeleBot(TOKEN)
 genai.configure(api_key=GEMINI_API_KEY)
 model = genai.GenerativeModel('gemini-1.5-flash')
 
-# 3. FONCTION DE PRÉDICTION FOOTBALL ANCIENNE
+# 3. FONCTION DE PRÉDICTION FOOTBALL
 def generer_analyse_ia(match):
     prob_dom = random.randint(40, 65)
     prob_ext = random.randint(20, 35)
     prob_nul = 100 - (prob_dom + prob_ext)
     
-    texte = f"🤖 *WEASBOY IA PRO*\n matchup : *{match}*\n📊 Victoire Dom: {prob_dom}% | Nul: {prob_nul}% | Victoire Ext: {prob_ext}%"
+    texte = f"🤖 *WEASBOY IA PRO*\nMatch : *{match}*\n📊 Victoire Dom: {prob_dom}% | Nul: {prob_nul}% | Victoire Ext: {prob_ext}%"
     return texte
 
 # 4. COMMANDES DU BOT
@@ -44,24 +44,20 @@ def send_welcome(message):
         reply_markup=markup,
     )
 
-# 5. GESTION DES MESSAGES (FOOT ET MODE DISCUSSION GEMINI)
+# 5. GESTION DES MESSAGES
 @bot.message_handler(func=lambda message: True)
 def handle_messages(message):
-    # Si l'utilisateur clique sur le bouton foot
     if message.text == "🏆 Matchs de la Coupe du Monde":
-        matchs = ["Portugal - Croatie", "Suise - Algérie"]
+        matchs = ["Portugal - Croatie", "Suisse - Algérie"]
         for m in matchs:
             analyse = generer_analyse_ia(m)
             bot.send_message(message.chat.id, analyse, parse_mode="Markdown")
-    
-    # Si l'utilisateur écrit autre chose -> L'IA Gemini répond !
     else:
         try:
-            # On envoie le texte à l'IA Gemini
             response = model.generate_content(message.text)
             bot.send_message(message.chat.id, response.text)
         except Exception as e:
-            bot.send_message(message.chat.id, "Désolé, j'ai un petit problème pour réfléchir en ce moment... 🤖")
+            bot.send_message(message.chat.id, "Désolé, j'ai un petit problème pour réfléchir... 🤖")
 
 # LANCEMENT DU BOT
 bot.polling(none_stop=True)
