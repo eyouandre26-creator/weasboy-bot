@@ -7,57 +7,57 @@ from telebot import types
 import google.generativeai as genai
 
 # 1. FAUX SERVEUR POUR RENDER
-def run_fake_server():
+def executer_faux_serveur():
     PORT = 10000
-    Handler = http.server.SimpleHTTPRequestHandler
-    with socketserver.TCPServer(("", PORT), Handler) as httpd:
+    Gestionnaire = http.server.SimpleHTTPRequestHandler
+    with socketserver.TCPServer(("", PORT), Gestionnaire) as httpd:
         httpd.serve_forever()
 
-threading.Thread(target=run_fake_server, daemon=True).start()
+threading.Thread(target=executer_faux_serveur, daemon=True).start()
 
-# 2. CONFIGURATION DES CLÉS
-TOKEN = "8984219272:AAFEoPVU4hfDiLggSL3dYUEswSUztTNA3ic"
-GEMINI_API_KEY = "AQ.Ab8RN6KEosy9rItekKaxlPQNlYyTOLyF5Llm68Gmu38L1u-rzQ"
+# 2. CONFIGURATION DES CLES
+JETON = "8984219272:AAFEoPVU4hfDiLggSL3dYUEsWSuztTNA3ic"
+Cle_API_GEMINI = "AIzaSy..." # Remets bien ta clé API Gemini complète ici comme elle l'était
 
-bot = telebot.TeleBot(TOKEN)
-genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel('gemini-1.5-flash')
+bot = telebot.TeleBot(JETON)
+genai.configure(api_key=Cle_API_GEMINI)
+modele = genai.GenerativeModel('gemini-1.5-flash')
 
-# 3. FONCTION DE PRÉDICTION FOOTBALL
-def generer_analyse_ia(match):
+# 3. FONCTION DE PREDICTION FOOTBALL
+def analyse_generique_ia(correspondre):
     prob_dom = random.randint(40, 65)
     prob_ext = random.randint(20, 35)
     prob_nul = 100 - (prob_dom + prob_ext)
     
-    texte = f"🤖 *WEASBOY IA PRO*\nMatch : *{match}*\n📊 Victoire Dom: {prob_dom}% | Nul: {prob_nul}% | Victoire Ext: {prob_ext}%"
+    texte = f"🤖 *WEASBOY IA PRO*\n\nCorrespondre : *{correspondre}*\n📊 Victoire Domicile : {prob_dom}%\n📊 Victoire Extérieur : {prob_ext}%\n📊 Match Nul : {prob_nul}%"
     return texte
 
 # 4. COMMANDES DU BOT
-@bot.message_handler(commands=["start"])
-def send_welcome(message):
-    markup = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
-    btn = types.KeyboardButton("🏆 Matchs de la Coupe du Monde")
-    markup.add(btn)
+@bot.message_handler(commands=["commencer"])
+def envoyer_bienvenue(message):
+    marge = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
+    bouton = types.KeyboardButton("🏆 Matchs de la Coupe du Monde")
+    marge.add(bouton)
     bot.send_message(
         message.chat.id,
-        "🔥 WEASBOY ALL-TIME EN LIGNE !\nPose-moi n'importe quelle question ou clique sur le bouton en bas.",
-        reply_markup=markup,
+        "🔥 WEASBOY ALL TIME EN LIGNE !\nPose-moi n'importe quelle question.",
+        reply_markup=marge
     )
 
 # 5. GESTION DES MESSAGES
 @bot.message_handler(func=lambda message: True)
-def handle_messages(message):
+def gerer_messages(message):
     if message.text == "🏆 Matchs de la Coupe du Monde":
         matchs = ["Portugal - Croatie", "Suisse - Algérie"]
         for m in matchs:
-            analyse = generer_analyse_ia(m)
-            bot.send_message(message.chat.id, analyse, parse_mode="Markdown")
+            analyser = analyse_generique_ia(m)
+            bot.send_message(message.chat.id, analyser, parse_mode="Markdown")
     else:
         try:
-            response = model.generate_content(message.text)
-            bot.send_message(message.chat.id, response.text)
+            reponse = modele.generate_content(message.text)
+            bot.send_message(message.chat.id, reponse.text)
         except Exception as e:
-            bot.send_message(message.chat.id, "Désolé, j'ai un petit problème pour réfléchir... 🤖")
+            bot.send_message(message.chat.id, "Désolé, j'ai rencontré une erreur.")
 
 # LANCEMENT DU BOT
 bot.polling(none_stop=True)
