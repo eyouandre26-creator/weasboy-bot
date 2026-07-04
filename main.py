@@ -1,7 +1,6 @@
 import os
 import random
 import threading
-import flask
 from flask import Flask
 import telebot
 from telebot import types
@@ -12,7 +11,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return "Bot is running!"
+    return "Bot is running perfectly on WSGI!"
 
 # 2. CONFIGURATION DES CLES
 JETON = "8984219272:AAEo7H0UFgw2I3ZejSqn2eBef8-wDu2N1_Y"
@@ -42,7 +41,6 @@ def analyse_generique_ia(correspondre):
 # 4. COMMANDES ET MENU DU BOT
 @bot.message_handler(commands=["commencer", "start"])
 def envoyer_bienvenue(message):
-    # Création du menu avec plusieurs fonctionnalités à disposition
     marge = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
     
     bouton_prono = types.KeyboardButton("📊 Analyses & Pronos")
@@ -83,20 +81,14 @@ def gerer_messages(message):
         bot.send_message(message.chat.id, texte_createur, parse_mode="Markdown")
         
     else:
-        # L'utilisateur discute directement avec l'IA
         try:
             reponse = modele.generate_content(message.text)
             bot.send_message(message.chat.id, reponse.text)
         except Exception as e:
             bot.send_message(message.chat.id, "Désolé, j'ai rencontré une erreur.")
 
-# Lancement du bot Telegram dans un thread séparé pour laisser Gunicorn gérer Flask
+# Lancement automatique du bot au démarrage du serveur par Gunicorn
 def run_bot():
     bot.polling(none_stop=True)
 
 threading.Thread(target=run_bot, daemon=True).start()
-
-# Requis pour que Gunicorn puisse trouver l'application
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))
-    app.run(host="0.0.0.0", port=port)
