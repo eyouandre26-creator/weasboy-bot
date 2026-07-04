@@ -20,7 +20,7 @@ def run_server():
 # Lancement du serveur en arrière-plan
 threading.Thread(target=run_server, daemon=True).start()
 
-# 2. CONFIGURATION DES CLES
+# 2. CONFIGURATION DES CLES (MISES A JOUR)
 JETON = "8984219272:AAEo7H0UFgw2I3ZejSqn2eBef8-wDu2N1_Y"
 Cle_API_GEMINI = "AQ.Ab8RN6KEosy9rItekKaxlPQNlYyTOLyF5Llm68Gmu38L1u-rzQ"
 
