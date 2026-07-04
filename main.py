@@ -22,7 +22,7 @@ threading.Thread(target=run_server, daemon=True).start()
 
 # 2. CONFIGURATION DES CLES
 JETON = "8984219272:AAEo7H0UFgw2I3ZejSqn2eBef8-wDu2N1_Y"
-Cle_API_GEMINI = "AQ.Ab8RN6KEosy9rItekKax1PQNlyYToLYF5llm68Gmu38L1u-rzQ"
+Cle_API_GEMINI = "AQ.Ab8RN6KEosy9rItekKaxlPQNlYyTOLyF5Llm68Gmu38L1u-rzQ"
 
 bot = telebot.TeleBot(JETON)
 genai.configure(api_key=Cle_API_GEMINI)
