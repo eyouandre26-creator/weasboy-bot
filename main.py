@@ -1,23 +1,28 @@
-import http.server
-import socketserver
-import threading
+import os
 import random
+import threading
+from flask import Flask
 import telebot
 from telebot import types
 import google.generativeai as genai
 
-# 1. FAUX SERVEUR POUR RENDER
-def executer_faux_serveur():
-    PORT = 10000
-    Gestionnaire = http.server.SimpleHTTPRequestHandler
-    with socketserver.TCPServer(("", PORT), Gestionnaire) as httpd:
-        httpd.serve_forever()
+# 1. CONFIGURATION DU SERVEUR WEB POUR RENDER
+app = Flask(__name__)
 
-threading.Thread(target=executer_faux_serveur, daemon=True).start()
+@app.route('/')
+def home():
+    return "Bot is running!"
+
+def run_server():
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
+
+# Lancement du serveur en arrière-plan
+threading.Thread(target=run_server, daemon=True).start()
 
 # 2. CONFIGURATION DES CLES
 JETON = "8984219272:AAFEoPVU4hfDiLggSL3dYUEsWSuztTNA3ic"
-Cle_API_GEMINI = "AIzaSy..." # Remets bien ta clé API Gemini complète ici comme elle l'était
+Cle_API_GEMINI = "AQ.Ab8RN6KEosy9rItekKax1PQNlyYToLYF5llm68Gmu38L1u-rzQ"
 
 bot = telebot.TeleBot(JETON)
 genai.configure(api_key=Cle_API_GEMINI)
@@ -29,7 +34,7 @@ def analyse_generique_ia(correspondre):
     prob_ext = random.randint(20, 35)
     prob_nul = 100 - (prob_dom + prob_ext)
     
-    texte = f"🤖 *WEASBOY IA PRO*\n\nCorrespondre : *{correspondre}*\n📊 Victoire Domicile : {prob_dom}%\n📊 Victoire Extérieur : {prob_ext}%\n📊 Match Nul : {prob_nul}%"
+    texte = f"🤖 *WEASBOY IA PRO*\n\nMatch : *{correspondre}*\n📊 Victoire Domicile : {prob_dom}%\n📊 Victoire Extérieur : {prob_ext}%\n📊 Match Nul : {prob_nul}%"
     return texte
 
 # 4. COMMANDES DU BOT
@@ -59,5 +64,6 @@ def gerer_messages(message):
         except Exception as e:
             bot.send_message(message.chat.id, "Désolé, j'ai rencontré une erreur.")
 
-# LANCEMENT DU BOT
-bot.polling(none_stop=True)
+# LANCEMENT DU BOT TELEGRAM
+if __name__ == "__main__":
+    bot.polling(none_stop=True)
